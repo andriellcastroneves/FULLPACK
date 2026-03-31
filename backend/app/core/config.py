@@ -37,7 +37,10 @@ BACKEND_CORS_ORIGINS = [
 ]
 
 IS_PRODUCTION = APP_ENV == "production"
-DOCS_ENABLED = os.getenv("DOCS_ENABLED", "true").strip().lower() == "true"
+DOCS_ENABLED = os.getenv(
+    "DOCS_ENABLED",
+    "false" if IS_PRODUCTION else "true",
+).strip().lower() == "true"
 
 if not DATABASE_URL:
     raise RuntimeError(
