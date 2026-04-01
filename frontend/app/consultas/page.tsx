@@ -118,9 +118,9 @@ export default function ConsultasPage() {
         <Header />
         <section className="panel px-6 py-8 md:px-10">
           <span className="chip">Consultas</span>
-          <h1 className="mt-4 text-4xl font-black tracking-tight">Conferencia do catalogo</h1>
+          <h1 className="mt-4 text-4xl font-black tracking-tight">Consulte produtos e caixas com rapidez</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/72">
-            Um espaco para verificar rapidamente produtos e caixas ja cadastrados.
+            Busque as informacoes que voce precisa para conferir detalhes antes de montar ou revisar um pedido.
           </p>
           {erro ? <p className="mt-4 text-sm font-medium text-danger">{erro}</p> : null}
         </section>
@@ -134,10 +134,10 @@ export default function ConsultasPage() {
             <div className="consulta-toolbar panel px-5 py-4 md:px-6">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">
-                  Navegacao de consulta
+                  Consulta guiada
                 </p>
                 <h2 className="mt-2 text-2xl font-black tracking-tight">
-                  Explore um catalogo por vez
+                  Escolha o que deseja consultar
                 </h2>
               </div>
               <div className="switcher">
@@ -168,19 +168,19 @@ export default function ConsultasPage() {
                   <section className="panel p-5 md:p-6">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold" htmlFor="busca-produtos">
-                        Filtrar produtos
+                        Buscar produtos
                       </label>
                       <input
                         id="busca-produtos"
                         className="field"
-                        placeholder="Busque por nome, ID, tipo ou dimensoes"
+                        placeholder="Digite o nome, codigo, tipo ou medida"
                         value={buscaProdutos}
                         onChange={(event) => setBuscaProdutos(event.target.value)}
                       />
                       <p className="text-sm text-foreground/72">
                         {termoProduto
                           ? `${produtosFiltrados.length} produto(s) encontrado(s).`
-                          : "Digite um termo para exibir apenas os produtos desejados."}
+                          : "Comece digitando para localizar apenas os produtos que voce quer consultar."}
                       </p>
                     </div>
                   </section>
@@ -194,7 +194,7 @@ export default function ConsultasPage() {
                   ) : (
                     <section className="panel flex min-h-[280px] items-center justify-center p-6">
                       <p className="max-w-md text-center text-sm leading-7 text-foreground/72">
-                        A listagem fica escondida ate voce iniciar a busca, deixando a tela mais leve e focada.
+                        A busca ajuda voce a encontrar informacoes rapidamente, sem precisar percorrer uma lista grande.
                       </p>
                     </section>
                   )}
@@ -204,19 +204,19 @@ export default function ConsultasPage() {
                   <section className="panel p-5 md:p-6">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold" htmlFor="busca-caixas">
-                        Filtrar caixas
+                        Buscar caixas
                       </label>
                       <input
                         id="busca-caixas"
                         className="field"
-                        placeholder="Busque por nome, ID ou dimensoes"
+                        placeholder="Digite o nome, codigo ou medida"
                         value={buscaCaixas}
                         onChange={(event) => setBuscaCaixas(event.target.value)}
                       />
                       <p className="text-sm text-foreground/72">
                         {termoCaixa
                           ? `${caixasFiltradas.length} caixa(s) encontrada(s).`
-                          : "Digite um termo para exibir apenas as caixas desejadas."}
+                          : "Comece digitando para localizar apenas as caixas que deseja consultar."}
                       </p>
                     </div>
                   </section>
@@ -230,7 +230,7 @@ export default function ConsultasPage() {
                   ) : (
                     <section className="panel flex min-h-[280px] items-center justify-center p-6">
                       <p className="max-w-md text-center text-sm leading-7 text-foreground/72">
-                        A lista aparece sob demanda, o que reduz o lag visual quando o catalogo cresce.
+                        Assim voce chega mais rapido ao que procura e mantem a tela mais leve durante o uso.
                       </p>
                     </section>
                   )}

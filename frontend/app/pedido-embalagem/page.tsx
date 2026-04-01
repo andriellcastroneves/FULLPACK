@@ -105,10 +105,9 @@ export default function PedidoEmbalagemPage() {
             <div className="panel p-6">
               <div className="mb-5 space-y-2">
                 <span className="chip">Pedido de embalagem</span>
-                <h1 className="text-3xl font-black tracking-tight">Monte o pedido</h1>
+                <h1 className="text-3xl font-black tracking-tight">Monte o pedido com facilidade</h1>
                 <p className="text-sm leading-7 text-foreground/72">
-                  Selecione os produtos cadastrados no backend e monte o pedido
-                  para gerar a instrucao de expedicao.
+                  Escolha os produtos, informe as quantidades e visualize a orientacao de embalagem para cada item.
                 </p>
                 <p
                   className={`text-sm font-semibold ${
@@ -120,10 +119,10 @@ export default function PedidoEmbalagemPage() {
                   }`}
                 >
                   {ambiente === "loading"
-                    ? "Preparando ambiente..."
+                    ? "Carregando informacoes..."
                     : ambiente === "ready"
-                      ? "Tudo pronto para montar o pedido."
-                      : "Houve um problema ao carregar os dados iniciais."}
+                      ? "Tudo pronto para voce montar o pedido."
+                      : "Nao foi possivel carregar os dados necessarios neste momento."}
                 </p>
               </div>
               <AddItemForm
@@ -133,7 +132,7 @@ export default function PedidoEmbalagemPage() {
               />
               {!loadingProdutos && produtos.length === 0 ? (
                 <p className="mt-4 text-sm text-warning">
-                  Nenhum produto cadastrado no backend. Cadastre produtos antes de gerar pedidos.
+                  Nenhum produto foi cadastrado ainda. Adicione os produtos para comecar a montar pedidos.
                 </p>
               ) : null}
             </div>
@@ -142,7 +141,7 @@ export default function PedidoEmbalagemPage() {
 
             <div className="panel p-6">
               <button className="btn-primary w-full" disabled={loading} onClick={gerarPedido}>
-                {loading ? "Gerando instrucao..." : "Gerar embalagem"}
+                {loading ? "Preparando pedido..." : "Gerar orientacao de embalagem"}
               </button>
               {erro ? <p className="mt-4 text-sm font-medium text-danger">{erro}</p> : null}
             </div>

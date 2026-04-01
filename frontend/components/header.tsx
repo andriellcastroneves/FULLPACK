@@ -11,7 +11,7 @@ export function Header() {
             FullPack
           </p>
           <h2 className="text-xl font-extrabold tracking-tight md:text-2xl">
-            Central de expedicao
+            Gestao de pedidos e embalagens
           </h2>
         </div>
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
@@ -26,7 +26,7 @@ export function Header() {
               Consultas
             </Link>
             <Link className="chip" href="/pedido-embalagem">
-              Geracao de pedidos
+              Pedidos
             </Link>
           </nav>
           <ThemeToggle />

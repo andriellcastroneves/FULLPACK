@@ -86,9 +86,9 @@ export default function CadastrosPage() {
         <Header />
         <section className="panel px-6 py-8 md:px-10">
           <span className="chip">Cadastros</span>
-          <h1 className="mt-4 text-4xl font-black tracking-tight">Alimentacao do catalogo</h1>
+          <h1 className="mt-4 text-4xl font-black tracking-tight">Cadastre os dados da sua operacao</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/72">
-            Aqui voce cadastra as informacoes-base usadas no restante da operacao.
+            Mantenha produtos e caixas organizados para agilizar consultas e o preparo dos pedidos.
           </p>
           {erro ? <p className="mt-4 text-sm font-medium text-danger">{erro}</p> : null}
         </section>
@@ -97,9 +97,9 @@ export default function CadastrosPage() {
           <div className="panel p-6">
             <div className="mb-5">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">Produtos</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight">Novo produto</h2>
+              <h2 className="mt-2 text-2xl font-black tracking-tight">Cadastrar produto</h2>
               <p className="mt-2 text-sm text-foreground/72">
-                {loading ? "Sincronizando dados..." : `${produtos.length} produto(s) cadastrados.`}
+                {loading ? "Carregando informacoes..." : `${produtos.length} produto(s) cadastrado(s).`}
               </p>
             </div>
             <ProdutoForm loading={savingProduto} onSubmit={criarProduto} />
@@ -108,9 +108,9 @@ export default function CadastrosPage() {
           <div className="panel p-6">
             <div className="mb-5">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">Caixas</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight">Nova caixa</h2>
+              <h2 className="mt-2 text-2xl font-black tracking-tight">Cadastrar caixa</h2>
               <p className="mt-2 text-sm text-foreground/72">
-                {loading ? "Sincronizando dados..." : `${caixas.length} caixa(s) cadastradas.`}
+                {loading ? "Carregando informacoes..." : `${caixas.length} caixa(s) cadastrada(s).`}
               </p>
             </div>
             <CaixaForm loading={savingCaixa} onSubmit={criarCaixa} />
