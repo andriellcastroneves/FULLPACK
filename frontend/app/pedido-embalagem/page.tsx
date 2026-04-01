@@ -12,6 +12,7 @@ import type { PedidoDraftItem, PedidoOutput, ProdutoResponse } from "@/types";
 export default function PedidoEmbalagemPage() {
   const [produtos, setProdutos] = useState<ProdutoResponse[]>([]);
   const [itens, setItens] = useState<PedidoDraftItem[]>([]);
+  const [paisDestino, setPaisDestino] = useState("outros");
   const [resultado, setResultado] = useState<PedidoOutput | null>(null);
   const [loadingProdutos, setLoadingProdutos] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -85,6 +86,7 @@ export default function PedidoEmbalagemPage() {
           produto_id: item.produtoId,
           quantidade: item.quantidade,
         })),
+        pais_destino: paisDestino,
       });
 
       setResultado(response);
@@ -109,6 +111,24 @@ export default function PedidoEmbalagemPage() {
                 <p className="text-sm leading-7 text-foreground/72">
                   Escolha os produtos, informe as quantidades e visualize a orientacao de embalagem para cada item.
                 </p>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold" htmlFor="pais-destino">
+                    Destino do pedido
+                  </label>
+                  <select
+                    id="pais-destino"
+                    className="field"
+                    value={paisDestino}
+                    onChange={(event) => setPaisDestino(event.target.value)}
+                  >
+                    <option value="outros">Outros destinos</option>
+                    <option value="portugal">Portugal</option>
+                    <option value="espanha">Espanha</option>
+                  </select>
+                  <p className="text-sm text-foreground/72">
+                    Para Portugal e Espanha, pedidos acima de 50 kg sao divididos em 3 ou 4 embalagens com pesos mais equilibrados.
+                  </p>
+                </div>
                 <p
                   className={`text-sm font-semibold ${
                     ambiente === "ready"

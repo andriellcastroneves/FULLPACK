@@ -1,6 +1,7 @@
 import math
 
 LIMITE_PESO_EMBALAGEM_KG = 40.0
+PAISES_IBERICOS = {"portugal", "espanha"}
 
 
 def gerar_rotacoes(item):
@@ -59,27 +60,49 @@ def escolher_largura_bolha(altura, largura, comprimento):
     maior_dim = max(altura, largura, comprimento)
 
     if maior_dim <= 30:
-        return "Plástico bolha 30 cm"
-    elif maior_dim <= 60:
-        return "Plástico bolha 60 cm"
-    return "Plástico bolha 1 m"
+        return "Plastico bolha 30 cm"
+    if maior_dim <= 60:
+        return "Plastico bolha 60 cm"
+    return "Plastico bolha 1 m"
 
 
-def dividir_quantidade_por_peso(quantidade, peso_unitario, limite=LIMITE_PESO_EMBALAGEM_KG):
-    max_por_volume = max(1, math.floor(limite / peso_unitario))
+def normalizar_pais_destino(pais_destino):
+    if not pais_destino:
+        return ""
 
-    volumes = []
-    restante = quantidade
-
-    while restante > 0:
-        qtd_volume = min(max_por_volume, restante)
-        volumes.append(qtd_volume)
-        restante -= qtd_volume
-
-    return volumes
+    return str(pais_destino).strip().lower()
 
 
-def gerar_instrucao_embalagem(produto, quantidade, caixas):
+def calcular_quantidade_volumes(peso_total, pais_destino, limite=LIMITE_PESO_EMBALAGEM_KG):
+    min_volumes = max(1, math.ceil(peso_total / limite))
+    pais_normalizado = normalizar_pais_destino(pais_destino)
+
+    if pais_normalizado in PAISES_IBERICOS and peso_total > 50:
+        return min(4, max(3, min_volumes))
+
+    return min_volumes
+
+
+def dividir_quantidade_por_peso(quantidade, peso_unitario, pais_destino=None, limite=LIMITE_PESO_EMBALAGEM_KG):
+    peso_total = quantidade * peso_unitario
+    quantidade_volumes = calcular_quantidade_volumes(
+        peso_total=peso_total,
+        pais_destino=pais_destino,
+        limite=limite,
+    )
+
+    quantidade_volumes = min(max(1, quantidade_volumes), quantidade)
+    base = quantidade // quantidade_volumes
+    resto = quantidade % quantidade_volumes
+
+    return [
+        base + (1 if indice < resto else 0)
+        for indice in range(quantidade_volumes)
+        if base + (1 if indice < resto else 0) > 0
+    ]
+
+
+def gerar_instrucao_embalagem(produto, quantidade, caixas, pais_destino=None):
     nome_upper = produto.nome.upper().strip()
 
     resultado = {
@@ -93,7 +116,11 @@ def gerar_instrucao_embalagem(produto, quantidade, caixas):
         "volumes": [],
     }
 
-    quantidades_por_volume = dividir_quantidade_por_peso(quantidade, produto.peso_unitario)
+    quantidades_por_volume = dividir_quantidade_por_peso(
+        quantidade=quantidade,
+        peso_unitario=produto.peso_unitario,
+        pais_destino=pais_destino,
+    )
 
     for idx, qtd_volume in enumerate(quantidades_por_volume, start=1):
         peso_volume = round(qtd_volume * produto.peso_unitario, 3)
@@ -108,7 +135,7 @@ def gerar_instrucao_embalagem(produto, quantidade, caixas):
 
         if produto.tipo_embalagem in ["caixa", "blister"]:
             item_dim = (produto.altura, produto.largura, produto.comprimento)
-            melhor_caixa, capacidade, rotacao = encontrar_melhor_caixa(
+            melhor_caixa, capacidade, _ = encontrar_melhor_caixa(
                 item_dim=item_dim,
                 quantidade=qtd_volume,
                 caixas=caixas,
@@ -123,7 +150,7 @@ def gerar_instrucao_embalagem(produto, quantidade, caixas):
 
         elif produto.tipo_embalagem in ["saco_feno_palha", "rolo_bolha"]:
             volume_info["embalagem_principal"] = "Filme preto"
-            volume_info["observacao"] = "Aplicar 1 volta cobrindo todo o conteúdo"
+            volume_info["observacao"] = "Aplicar 1 volta cobrindo todo o conteudo"
 
         elif produto.tipo_embalagem == "rolo_cartonado":
             material = escolher_largura_bolha(produto.altura, produto.largura, produto.comprimento)
@@ -137,14 +164,14 @@ def gerar_instrucao_embalagem(produto, quantidade, caixas):
         elif produto.tipo_embalagem == "caixa_desmontada":
             material = escolher_largura_bolha(produto.altura, produto.largura, produto.comprimento)
             volume_info["embalagem_principal"] = material
-            volume_info["observacao"] = "Enrolar em plástico bolha"
+            volume_info["observacao"] = "Enrolar em plastico bolha"
 
         else:
-            volume_info["embalagem_principal"] = "Tipo não mapeado"
+            volume_info["embalagem_principal"] = "Tipo nao mapeado"
             volume_info["observacao"] = "Verificar cadastro do produto"
 
         if nome_upper.startswith("VD"):
-            complemento = "Aplicar reforço com plástico bolha após embalagem"
+            complemento = "Aplicar reforco com plastico bolha apos embalagem"
             volume_info["observacao"] = f"{volume_info['observacao']} | {complemento}"
 
         resultado["volumes"].append(volume_info)
@@ -154,7 +181,10 @@ def gerar_instrucao_embalagem(produto, quantidade, caixas):
         resultado["observacao"] = resultado["volumes"][0]["observacao"]
     else:
         resultado["embalagem_principal"] = f"{len(resultado['volumes'])} volumes"
-        resultado["observacao"] = f"Pedido dividido por peso máximo de {LIMITE_PESO_EMBALAGEM_KG} kg"
+        resultado["observacao"] = (
+            f"Pedido dividido em volumes com pesos equilibrados, respeitando o limite de "
+            f"{LIMITE_PESO_EMBALAGEM_KG} kg por volume"
+        )
 
     return resultado
 
@@ -165,7 +195,8 @@ def ajustar_tampas_no_pedido(resultados):
     for resultado in resultados:
         if resultado["tipo_embalagem"] in ["caixa", "blister"]:
             for volume in resultado["volumes"]:
-                if volume["embalagem_principal"].startswith("Caixa:"):
+                embalagem = volume["embalagem_principal"] or ""
+                if embalagem.startswith("Caixa:"):
                     item_principal_em_caixa = resultado["produto"]
                     break
         if item_principal_em_caixa:
@@ -182,11 +213,11 @@ def ajustar_tampas_no_pedido(resultados):
                     volume["observacao"] = f"Acompanhar item principal: {item_principal_em_caixa}"
             else:
                 resultado["embalagem_principal"] = "Verificar manualmente"
-                resultado["observacao"] = "Não há item principal embalado em caixa neste pedido"
+                resultado["observacao"] = "Nao ha item principal embalado em caixa neste pedido"
 
                 for volume in resultado["volumes"]:
                     volume["embalagem_principal"] = "Verificar manualmente"
-                    volume["observacao"] = "Não há item principal embalado em caixa neste pedido"
+                    volume["observacao"] = "Nao ha item principal embalado em caixa neste pedido"
 
     return resultados
 
@@ -196,23 +227,25 @@ def consolidar_embalagem(resultados):
         "caixas": {},
         "filme_preto": 0,
         "plastico_bolha": {},
-        "outros": []
+        "outros": [],
     }
 
-    for r in resultados:
-        for volume in r["volumes"]:
-            emb = volume["embalagem_principal"] or ""
+    for resultado in resultados:
+        for volume in resultado["volumes"]:
+            embalagem = volume["embalagem_principal"] or ""
 
-            if emb.startswith("Caixa:"):
-                nome_caixa = emb.replace("Caixa:", "").strip()
+            if embalagem.startswith("Caixa:"):
+                nome_caixa = embalagem.replace("Caixa:", "").strip()
                 resumo["caixas"][nome_caixa] = resumo["caixas"].get(nome_caixa, 0) + 1
-            elif "Filme preto" in emb:
+            elif "Filme preto" in embalagem:
                 resumo["filme_preto"] += 1
-            elif "Plástico bolha" in emb:
-                resumo["plastico_bolha"][emb] = resumo["plastico_bolha"].get(emb, 0) + 1
-            elif "Incluir junto na caixa" in emb:
+            elif "Plastico bolha" in embalagem:
+                resumo["plastico_bolha"][embalagem] = (
+                    resumo["plastico_bolha"].get(embalagem, 0) + 1
+                )
+            elif "Incluir junto na caixa" in embalagem:
                 continue
             else:
-                resumo["outros"].append(r["produto"])
+                resumo["outros"].append(resultado["produto"])
 
     return resumo

@@ -26,6 +26,7 @@ def gerar_pedido_embalagem(payload: PedidoInput, db: Session = Depends(get_db)):
             produto=produto,
             quantidade=item.quantidade,
             caixas=caixas,
+            pais_destino=payload.pais_destino,
         )
         resultados.append(instrucao)
 

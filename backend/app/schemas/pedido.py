@@ -9,6 +9,7 @@ class PedidoItemInput(BaseModel):
 
 class PedidoInput(BaseModel):
     itens: List[PedidoItemInput]
+    pais_destino: Optional[str] = None
 
 
 class VolumeOutput(BaseModel):

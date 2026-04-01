@@ -46,6 +46,7 @@ export type PedidoItemInput = {
 
 export type PedidoInput = {
   itens: PedidoItemInput[];
+  pais_destino?: string | null;
 };
 
 export type VolumeOutput = {
